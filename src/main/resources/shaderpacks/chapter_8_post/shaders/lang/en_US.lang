@@ -1,0 +1,7 @@
+option.EFFECT=Effect Mode
+option.EFFECT.comment=Select post-processing effect
+value.EFFECT.bloom=Bloom
+value.EFFECT.tonemap=Tone Mapping
+value.EFFECT.colorgrade=Color Grading
+value.EFFECT.fxaa=FXAA
+value.EFFECT.filmlook=Film Look
