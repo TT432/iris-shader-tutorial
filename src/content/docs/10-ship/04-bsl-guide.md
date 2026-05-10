@@ -38,7 +38,7 @@ BSL v10 的 `shaders/` 目录打开有三个关键文件夹，每一层有不同
 
 ```mermaid
 flowchart TD
-    D["dimension<br/>world0/composite.fsh<br/>只有 #include"] --> P["program<br/>program/composite.glsl<br/>组织这个 pass 的流程"]
+    D["dimension<br/>world0/composite.fsh<br/>include program"] --> P["program<br/>program/composite.glsl<br/>组织这个 pass 的流程"]
     P --> L1["lib/color/skyColor.glsl<br/>天空色"]
     P --> L2["lib/lighting/ambientOcclusion.glsl<br/>环境光遮蔽"]
     P --> L3["lib/atmospherics/clouds.glsl<br/>体积云"]
@@ -76,15 +76,16 @@ flowchart TD
 ```mermaid
 sequenceDiagram
     participant S as shadow
-    participant G as gbuffers_*
+    participant G as gbuffers pass
     participant D as deferred
     participant C as composite0-7
     participant F as final
+    participant O as 屏幕
     S->>G: shadow map 就绪
     G->>D: G-Buffer 写满
     D->>C: 光照与 AO 预处理
     C->>F: 后处理完成
-    F-->>屏幕: 输出最终画面
+    F-->>O: 输出最终画面
 ```
 
 > 一帧的寿命很短，但它的路很长。知道每一步在做什么，你才能在"画质像屎"的时候找到是第几步开始烂的。

@@ -2,21 +2,37 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const dist = path.join(process.cwd(), 'dist');
+const docs = path.join(process.cwd(), 'src', 'content', 'docs');
 const htmlFiles = [];
+const markdownFiles = [];
 
-function walk(dir) {
+function walk(dir, visitor) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) walk(fullPath);
-    else if (entry.name.endsWith('.html')) htmlFiles.push(fullPath);
+    if (entry.isDirectory()) walk(fullPath, visitor);
+    else visitor(fullPath);
   }
 }
 
-walk(dist);
+walk(dist, (file) => {
+  if (file.endsWith('.html')) htmlFiles.push(file);
+});
+
+walk(docs, (file) => {
+  if (file.endsWith('.md')) markdownFiles.push(file);
+});
 
 const rootAssetPattern = /(src|href)="\/(images|assets|_astro)\//;
+const generatedPages = new Set(htmlFiles.map((file) => path.relative(dist, file).replaceAll(path.sep, '/')));
+const missingPages = [];
 const sparsePages = [];
 const rootAssetPages = [];
+
+for (const file of markdownFiles) {
+  const rel = path.relative(docs, file).replaceAll(path.sep, '/').replace(/\.md$/, '');
+  const expected = rel === 'index' ? 'index.html' : `${rel}/index.html`;
+  if (!generatedPages.has(expected)) missingPages.push(expected);
+}
 
 for (const file of htmlFiles) {
   const html = fs.readFileSync(file, 'utf8');
@@ -38,11 +54,16 @@ if (rootAssetPages.length) {
   for (const page of rootAssetPages) console.error(`- ${page}`);
 }
 
+if (missingPages.length) {
+  console.error('Markdown files without generated pages:');
+  for (const page of missingPages) console.error(`- ${page}`);
+}
+
 if (sparsePages.length) {
   console.error('Pages with suspiciously sparse content:');
   for (const page of sparsePages) console.error(`- ${page}`);
 }
 
-if (rootAssetPages.length || sparsePages.length) process.exit(1);
+if (rootAssetPages.length || missingPages.length || sparsePages.length) process.exit(1);
 
 console.log(`Validated ${htmlFiles.length} HTML files.`);
