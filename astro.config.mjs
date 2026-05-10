@@ -4,13 +4,29 @@ import rehypeMermaid from 'rehype-mermaid';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
+const base = '/iris-shader-tutorial';
+
+function remarkPrefixBaseForPublicImages() {
+  return (tree) => {
+    const visit = (node) => {
+      if (!node || typeof node !== 'object') return;
+      if (node.type === 'image' && typeof node.url === 'string' && node.url.startsWith('/images/')) {
+        node.url = `${base}${node.url}`;
+      }
+      if (Array.isArray(node.children)) node.children.forEach(visit);
+    };
+
+    visit(tree);
+  };
+}
+
 export default defineConfig({
   site: 'https://tt432.github.io',
-  base: '/iris-shader-tutorial',
+  base,
 
   // Mermaid 图表 + LaTeX 数学公式支持
   markdown: {
-    remarkPlugins: [remarkMath],
+    remarkPlugins: [remarkMath, remarkPrefixBaseForPublicImages],
     rehypePlugins: [[rehypeKatex, {}], [rehypeMermaid, { strategy: 'img-svg' }]],
   },
 
