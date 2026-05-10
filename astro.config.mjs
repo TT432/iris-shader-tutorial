@@ -5,11 +5,8 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
 export default defineConfig({
-  // 部署到 GitHub Pages 时替换为你的域名
-  // 格式: https://<用户名>.github.io/<仓库名>/
-  site: 'https://your-username.github.io',
-  // 本地开发时注释掉 base；部署到 GitHub Pages 时取消注释
-  // base: '/iris-shader-tutorial',
+  site: 'https://tt432.github.io',
+  base: '/iris-shader-tutorial',
 
   // Mermaid 图表 + LaTeX 数学公式支持
   markdown: {
@@ -41,7 +38,7 @@ export default defineConfig({
 
       // 社交链接
       social: [
-        { icon: 'github', label: 'GitHub', href: 'https://github.com/your-username/iris-shader-tutorial' },
+        { icon: 'github', label: 'GitHub', href: 'https://github.com/TT432/iris-shader-tutorial' },
       ],
 
       // 搜索: Pagefind (CJK 友好)
@@ -49,7 +46,7 @@ export default defineConfig({
 
       // 编辑链接
       editLink: {
-        baseUrl: 'https://github.com/your-username/iris-shader-tutorial/edit/main/',
+        baseUrl: 'https://github.com/TT432/iris-shader-tutorial/edit/main/',
       },
 
       // 侧边栏定义 — 只列出已写完的页面
